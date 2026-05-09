@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="40" fill="#F5F0E8"/>
+  <rect x="20" y="20" width="152" height="152" rx="28" fill="#FDFAF4"/>
+  <!-- Calendar grid top bar -->
+  <rect x="36" y="48" width="120" height="14" rx="6" fill="#E8A87C"/>
+  <!-- Calendar dots -->
+  <circle cx="56" cy="88" r="6" fill="#E8A87C"/>
+  <circle cx="80" cy="88" r="6" fill="#E0D8CC"/>
+  <circle cx="104" cy="88" r="6" fill="#E0D8CC"/>
+  <circle cx="128" cy="88" r="6" fill="#E0D8CC"/>
+  <circle cx="56" cy="112" r="6" fill="#E0D8CC"/>
+  <circle cx="80" cy="112" r="6" fill="#A8D4B0"/>
+  <circle cx="104" cy="112" r="6" fill="#E0D8CC"/>
+  <circle cx="128" cy="112" r="6" fill="#E0D8CC"/>
+  <circle cx="56" cy="136" r="6" fill="#E0D8CC"/>
+  <circle cx="80" cy="136" r="6" fill="#E0D8CC"/>
+  <circle cx="104" cy="136" r="6" fill="#A8C8E8"/>
+  <circle cx="128" cy="136" r="6" fill="#E0D8CC"/>
+</svg>

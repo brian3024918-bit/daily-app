@@ -1,27 +1,148 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+@import "tw-animate-css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    /* Daily 디자인 토큰 — 라이트 모드 */
+    --bg-main:       #F5F0E8;
+    --bg-card:       #FDFAF4;
+    --bg-sidebar:    #EDE8DF;
+    --border-color:  #E0D8CC;
+
+    --text-primary:  #2C2416;
+    --text-sub:      #8B7E6E;
+    --text-muted:    #B5A898;
+
+    --accent-orange: #E8A87C;
+    --accent-blue:   #A8C8E8;
+
+    --color-coral:    #F2A896;
+    --color-mint:     #A8D4B0;
+    --color-sky:      #A8C8E8;
+    --color-lavender: #C8B8E8;
+    --color-sand:     #E8D8A0;
+    --color-rose:     #E8A8B8;
+
+    /* shadcn 호환 변수 — Daily 팔레트로 맵핑 */
+    --background:        #F5F0E8;
+    --foreground:        #2C2416;
+    --card:              #FDFAF4;
+    --card-foreground:   #2C2416;
+    --popover:           #FDFAF4;
+    --popover-foreground:#2C2416;
+    --primary:           #E8A87C;
+    --primary-foreground:#FDFAF4;
+    --secondary:         #EDE8DF;
+    --secondary-foreground: #2C2416;
+    --muted:             #EDE8DF;
+    --muted-foreground:  #8B7E6E;
+    --accent:            #E8A87C;
+    --accent-foreground: #FDFAF4;
+    --destructive:       #E87878;
+    --border:            #E0D8CC;
+    --input:             #E0D8CC;
+    --ring:              #E8A87C;
+    --radius:            0.75rem;
+  }
+
+  .dark {
+    /* Daily 디자인 토큰 — 다크 모드 */
+    --bg-main:       #1C1814;
+    --bg-card:       #252018;
+    --bg-sidebar:    #1A1610;
+    --border-color:  #3A3028;
+
+    --text-primary:  #F0EBE0;
+    --text-sub:      #9A8E7E;
+    --text-muted:    #6A5E4E;
+
+    --accent-orange: #D4956A;
+    --accent-blue:   #8AB0CC;
+
+    /* shadcn 호환 변수 — 다크 */
+    --background:        #1C1814;
+    --foreground:        #F0EBE0;
+    --card:              #252018;
+    --card-foreground:   #F0EBE0;
+    --popover:           #252018;
+    --popover-foreground:#F0EBE0;
+    --primary:           #D4956A;
+    --primary-foreground:#F0EBE0;
+    --secondary:         #2C2418;
+    --secondary-foreground: #F0EBE0;
+    --muted:             #2C2418;
+    --muted-foreground:  #9A8E7E;
+    --accent:            #D4956A;
+    --accent-foreground: #F0EBE0;
+    --destructive:       #C06060;
+    --border:            #3A3028;
+    --input:             #3A3028;
+    --ring:              #D4956A;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* 스크롤바 스타일 */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 9999px;
+  }
+}
+
+/* PWA / 모바일 최적화 */
+@layer base {
+  /* iOS Safe Area 대응 */
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* 텍스트 선택 방지 (앱 UX) */
+  button, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  /* 입력창 iOS 자동 확대 방지 */
+  input, select, textarea {
+    font-size: max(16px, 1em);
+  }
+
+  /* 스크롤 관성 (iOS) */
+  .overflow-y-auto, .overflow-y-scroll {
+    -webkit-overflow-scrolling: touch;
   }
 }
