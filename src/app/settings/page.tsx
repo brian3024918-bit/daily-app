@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { useTheme } from '@/lib/contexts/ThemeContext';
-import { Moon, Sun, Download } from 'lucide-react';
+import { useAuth } from '@/lib/contexts/AuthContext';
+import { Moon, Sun, Download, LogOut } from 'lucide-react';
 
 function SettingsContent() {
   const { isDark, toggleDark } = useTheme();
+  const { user, signOut } = useAuth();
   const [canInstall, setCanInstall] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<Event & { prompt?: () => Promise<void> } | null>(null);
 
@@ -102,6 +104,34 @@ function SettingsContent() {
           </div>
         </div>
       )}
+
+      {/* 계정 */}
+      <div
+        className="rounded-2xl overflow-hidden mb-4"
+        style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
+      >
+        <div className="px-4 py-2.5 border-b" style={{ borderColor: 'var(--border-color)' }}>
+          <h2 className="text-[11px] font-semibold uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>
+            계정
+          </h2>
+        </div>
+        <div className="px-4 py-3 flex items-center justify-between">
+          <div>
+            <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+              {user?.user_metadata?.full_name ?? user?.email ?? '사용자'}
+            </div>
+            <div className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>{user?.email}</div>
+          </div>
+          <button
+            onClick={signOut}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-opacity hover:opacity-80"
+            style={{ backgroundColor: 'var(--bg-sidebar)', color: 'var(--text-sub)', border: '1px solid var(--border-color)' }}
+          >
+            <LogOut size={12} />
+            로그아웃
+          </button>
+        </div>
+      </div>
 
       {/* 앱 정보 */}
       <div

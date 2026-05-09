@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { DiaryEntry, Tag, Weather } from '@/types';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/lib/contexts/AuthContext';
 
 interface DiaryContextValue {
   diaries: DiaryEntry[];
@@ -43,22 +44,25 @@ function fromDbTag(row: Record<string, unknown>): Tag {
 }
 
 export function DiaryProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
 
   useEffect(() => {
-    supabase.from('diaries').select('*').order('date', { ascending: false })
+    if (!user) { setDiaries([]); setTags([]); return; }
+
+    supabase.from('diaries').select('*').eq('user_id', user.id).order('date', { ascending: false })
       .then(({ data, error }) => {
         if (error) { console.error('diaries load error:', error); return; }
         if (data) setDiaries(data.map(fromDbDiary));
       });
 
-    supabase.from('tags').select('*').order('created_at')
+    supabase.from('tags').select('*').eq('user_id', user.id).order('created_at')
       .then(({ data, error }) => {
         if (error) { console.error('tags load error:', error); return; }
         if (data) setTags(data.map(fromDbTag));
       });
-  }, []);
+  }, [user]);
 
   const getDiary = useCallback(
     (date: string) => diaries.find(d => d.date === date),
@@ -83,6 +87,7 @@ export function DiaryProvider({ children }: { children: ReactNode }) {
       weather: entry.weather ?? null,
       mood: entry.mood ?? null,
       tags: entry.tags ?? [],
+      user_id: user?.id,
     };
     supabase.from('diaries').upsert(row, { onConflict: 'date' })
       .then(({ error }) => { if (error) console.error('diary save error:', error); });
@@ -97,10 +102,10 @@ export function DiaryProvider({ children }: { children: ReactNode }) {
   const addTag = useCallback((name: string, color: string): Tag => {
     const newTag: Tag = { id: `tag${Date.now()}`, name, color };
     setTags(prev => [...prev, newTag]);
-    supabase.from('tags').insert({ id: newTag.id, name, color })
+    supabase.from('tags').insert({ id: newTag.id, name, color, user_id: user?.id })
       .then(({ error }) => { if (error) console.error('tag insert error:', error); });
     return newTag;
-  }, []);
+  }, [user]);
 
   return (
     <DiaryContext.Provider value={{ diaries, tags, getDiary, saveDiary, deleteDiary, addTag }}>

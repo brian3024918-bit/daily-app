@@ -8,6 +8,15 @@ export const metadata: Metadata = {
   description: "날짜 중심으로 일정 · 할일 · 일기가 하나로 통합된 앱",
   manifest: "/manifest.json",
   keywords: ["캘린더", "일기", "할일", "일정관리", "다이어리"],
+  icons: {
+    icon: [
+      { url: '/api/icon?size=192', sizes: '192x192', type: 'image/png' },
+      { url: '/api/icon?size=512', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/api/icon?size=192', sizes: '192x192', type: 'image/png' },
+    ],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

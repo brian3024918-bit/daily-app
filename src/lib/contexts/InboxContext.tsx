@@ -15,6 +15,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { format, endOfWeek, isToday, isThisWeek } from 'date-fns';
 import { Schedule, Priority, Repeat } from '@/types';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/lib/contexts/AuthContext';
 
 type TabKey = 'today' | 'thisWeek' | 'later';
 export type TaskDraft = Omit<Schedule, 'id'> & { id?: string };
@@ -52,7 +53,7 @@ function fromDb(row: Record<string, unknown>): Schedule {
 }
 
 // Schedule → DB row
-function toDb(task: Schedule) {
+function toDb(task: Schedule, userId?: string) {
   return {
     id: task.id,
     title: task.title,
@@ -66,6 +67,7 @@ function toDb(task: Schedule) {
     is_completed: task.isCompleted,
     is_archived: task.isArchived,
     sort_order: task.sortOrder,
+    ...(userId ? { user_id: userId } : {}),
   };
 }
 
@@ -108,6 +110,7 @@ function OverlayCard({ task }: { task: Schedule }) {
 }
 
 export function InboxProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [tasks, setTasks] = useState<Schedule[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -115,14 +118,15 @@ export function InboxProvider({ children }: { children: ReactNode }) {
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
   );
 
-  // Supabase에서 tasks 로드
+  // 유저별 tasks 로드
   useEffect(() => {
-    supabase.from('tasks').select('*').order('sort_order')
+    if (!user) { setTasks([]); return; }
+    supabase.from('tasks').select('*').eq('user_id', user.id).order('sort_order')
       .then(({ data, error }) => {
         if (error) { console.error('tasks load error:', error); return; }
         if (data) setTasks(data.map(fromDb));
       });
-  }, []);
+  }, [user]);
 
   const saveTask = useCallback((draft: TaskDraft) => {
     if (draft.id) {
@@ -134,10 +138,10 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       // 신규 추가
       const newTask: Schedule = { ...draft, id: `t${Date.now()}` } as Schedule;
       setTasks(prev => [...prev, newTask]);
-      supabase.from('tasks').insert(toDb(newTask))
+      supabase.from('tasks').insert(toDb(newTask, user?.id))
         .then(({ error }) => { if (error) console.error('task insert error:', error); });
     }
-  }, []);
+  }, [user]);
 
   const deleteTask = useCallback((id: string) => {
     setTasks(prev => prev.filter(t => t.id !== id));
